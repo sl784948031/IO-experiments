@@ -6,18 +6,18 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class GenerateIntArray
+public class RandomIO
 {
     private int     count   = 1000;             // 数组的个数,
     private int     size    = 3000;               // 每个数组的元素个数
     private int[][] dataArr;
     private Random  random  = new Random(1000);
 
-    public GenerateIntArray() {
+    public RandomIO() {
         dataArr = new int[count][size];
     }
 
-    public GenerateIntArray(int count, int size) {
+    public RandomIO(int count, int size) {
         this.count = count;
         this.size = size;
         this.dataArr = new int[count][size];
@@ -190,9 +190,8 @@ public class GenerateIntArray
     {
         int count = 2;
         int size = 100000;
-        boolean bPrintData = false; //是否打印生成的数组,当数据量大是不打印,只在小数据量时打印以便测试
         System.out.printf("count = %d, size = %d \n\n",count,size);
-        GenerateIntArray generator = new GenerateIntArray(count, size);
+        RandomIO generator = new RandomIO(count, size);
         File f;
         try {
             f = new File("test_data.txt");
@@ -200,61 +199,35 @@ public class GenerateIntArray
             System.out.println("正在生成数据,请稍后——————————————————————————————————————");
             long startTmie = System.nanoTime();
             generator.refreshDataArr();
-            long totalTime = (System.nanoTime() - startTmie);
-            System.out.println("refreshDataArr 生成数据成功, 耗时:" + totalTime+"ns");
+            long totalTime = (System.nanoTime() - startTmie)/10000;
+            System.out.println("refreshDataArr 生成数据成功, 耗时:" + totalTime);
 
             System.out.println("正在生成数据,请稍后——————————————————————————————————————");
             startTmie = System.nanoTime();
             generator.refreshDataArr_M();
-            totalTime = (System.nanoTime() - startTmie);
-            System.out.println("refreshDataArr_M 生成数据成功, 耗时:" + totalTime+"ns");
+            totalTime = (System.nanoTime() - startTmie)/10000;
+            System.out.println("refreshDataArr_M 生成数据成功, 耗时:" + totalTime);
 
             System.out.println("正在写入数据,请稍后——————————————————————————————————————");
             startTmie = System.nanoTime();
             generator.writeData2File_B(f);
-            totalTime = (System.nanoTime() - startTmie);
+            totalTime = (System.nanoTime() - startTmie)/10000;
             System.out.println("数据已写入文件" + f.getPath() + File.separator + f.getName());
-            System.out.println("writeData2File_B写入数据耗时:" + totalTime+"ns");
+            System.out.println("writeData2File_B写入数据耗时:" + totalTime);
 
             System.out.println("正在写入数据,请稍后——————————————————————————————————————");
             startTmie = System.nanoTime();
             generator.writeData2File(f);
-            totalTime = (System.nanoTime() - startTmie);
+            totalTime = (System.nanoTime() - startTmie)/10000;
             System.out.println("数据已写入文件" + f.getPath() + File.separator + f.getName());
-            System.out.println("writeData2File 写入数据耗时:" + totalTime+"ns");
+            System.out.println("writeData2File 写入数据耗时:" + totalTime);
 
             System.out.println("正在写入数据,请稍后——————————————————————————————————————");
             startTmie = System.nanoTime();
             generator.writeData2File_M(f);
-            totalTime = (System.nanoTime() - startTmie);
+            totalTime = (System.nanoTime() - startTmie)/10000;
             System.out.println("数据已写入文件" + f.getPath() + File.separator + f.getName());
-            System.out.println("writeData2File_M写入数据耗时:" + totalTime+"ns");
-            if(bPrintData) {
-                System.out.println("原始数组中生成的数据...");
-                int[][] intArr = generator.getDataArr();
-                for (int i = 0; i < count; i++) {
-                    for (int j = 0; j < size; j++) {
-                        System.out.printf("%d ", intArr[i][j]);
-                    }
-                    System.out.println();
-                }
-                System.out.println("从文件中读取出来的数据...");
-                RandomAccessFile rf = new RandomAccessFile(f, "r");
-                rf.seek(0);
-                int iline = 1;
-                while (true) {
-                    System.out.printf("%d ",rf.readInt());
-                    if(iline % size == 0) {
-                        System.out.println();
-                    }
-                    iline ++;
-                    // 判断已经到文件尾了
-                    if (rf.getFilePointer() >= rf.length() - 1) {
-                        break;
-                    }
-                }
-                rf.close();
-            }
+            System.out.println("writeData2File_M写入数据耗时:" + totalTime);
         }
         catch (Exception e) {
             e.printStackTrace();
